@@ -4,22 +4,19 @@ using Xunit;
 
 namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
     public class When_not_injecting_properties_by_default : PropertyInjectionScenario {
-        public When_not_injecting_properties_by_default()
-            : base(false,
-                Component.For<QuestionOfLifeUniverseAndEverything>()) { }
-        [Fact] public void will_not_fill_properties() { Assert.Null(_question.TheAnswer); }
+        public When_not_injecting_properties_by_default() : base(false) { }
+        [Fact] public void will_not_fill_properties() {
+            additonal_registration = x => x;
+            check = no_properties_were_injected; 
+        }
+        [Fact] public void but_allowing_injection_on_component() {
+            additonal_registration = x => x.AddAttributeDescriptor("wire-all-properties", "TRUE");
+            check = all_properties_were_injected; 
+        }
+        [Fact] public void but_allowing_injection_on_component_with_extension() {
+            additonal_registration = x => x.WireProperties(o=>o.All());
+            check = all_properties_were_injected; 
+        }
     }
-    public class When_not_injecting_properties_by_default_but_allowing_specific_property_injection_for_component : PropertyInjectionScenario {
-        public When_not_injecting_properties_by_default_but_allowing_specific_property_injection_for_component()
-            : base(false,
-                Component.For<QuestionOfLifeUniverseAndEverything>().AddAttributeDescriptor("wire-all-properties", "true")) { }
-        [Fact] public void will_fill_property() { Assert.NotNull(_question.TheAnswer); }
-    }
-    public class When_not_injecting_properties_by_default_but_allowing_specific_property_injection_for_component_with_extension : PropertyInjectionScenario {
-        public When_not_injecting_properties_by_default_but_allowing_specific_property_injection_for_component_with_extension()
-            : base(false,
-                Component.For<QuestionOfLifeUniverseAndEverything>().WireProperties(o=>o.All())) { }
-        [Fact]
-        public void will_fill_property() { Assert.NotNull(_question.TheAnswer); }
-    }
+
 }

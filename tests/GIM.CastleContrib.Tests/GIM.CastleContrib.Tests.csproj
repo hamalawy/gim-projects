@@ -69,6 +69,7 @@
     <Compile Include="PropertyInjectionFacility\PropertyInjectionScenario.cs" />
     <Compile Include="PropertyInjectionFacility\QuestionOfLifeUniverseAndEverything.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyInjectionFacility\When_injecting_properties_by_default.cs" />
     <Compile Include="PropertyInjectionFacility\When_not_injecting_properties_by_default.cs" />
   </ItemGroup>
   <ItemGroup>

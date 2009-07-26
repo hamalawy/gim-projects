@@ -6,5 +6,6 @@ namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
     }
     public class QuestionOfLifeUniverseAndEverything {
         public AnswerToLifeUniverseAndEverything TheAnswer { get; set; }
+        public AnswerToLifeUniverseAndEverything OtherAnswer { get; set; }
     }
 }

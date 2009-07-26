@@ -30,9 +30,17 @@ namespace System {
         public static void AddIfNew<VALUE>(this ICollection<VALUE> list, VALUE item) {
             if (!list.Contains(item)) list.Add(item);
         }
-        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
-            foreach (var obj in enumerable)
-                action(obj);
-        }
+        //public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
+        //    foreach (var obj in enumerable)
+        //        action(obj);
+        //}
     }
 }
+//namespace System.Linq {
+//    public static class HelpfulExtensions {
+//        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
+//            foreach (var obj in enumerable)
+//                action(obj);
+//        }
+//    }
+//}
