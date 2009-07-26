@@ -40,5 +40,4 @@ namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
             check = all_properties_were_injected;
         }
     }
-
 }
