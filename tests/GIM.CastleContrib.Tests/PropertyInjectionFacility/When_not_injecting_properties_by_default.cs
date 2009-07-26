@@ -17,6 +17,28 @@ namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
             additonal_registration = x => x.WireProperties(o=>o.All());
             check = all_properties_were_injected; 
         }
+        [Fact] public void but_allowing_injection_on_selected_component_with_string_extension() {
+            additonal_registration = x => x.WireProperties(o=>o.Select("TheAnswer"));
+            check = () => {
+                Assert.NotNull(_question.TheAnswer);
+                Assert.Null(_question.OtherAnswer);
+            }; 
+        }
+        [Fact] public void but_allowing_injection_on_selected_multpile_components_with_string_extension() {
+            additonal_registration = x => x.WireProperties(o=>o.Select("TheAnswer, OtherAnswer"));
+            check = all_properties_were_injected;
+        }
+        [Fact] public void but_allowing_injection_on_selected_component_with_expression_extension() {
+            additonal_registration = x => x.WireProperties(o => o.Select(ex => ex.TheAnswer));
+            check = () => {
+                Assert.NotNull(_question.TheAnswer);
+                Assert.Null(_question.OtherAnswer);
+            };
+        }
+        [Fact] public void but_allowing_injection_on_selected_multpile_components_with_expression_extension() {
+            additonal_registration = x => x.WireProperties(o=>o.Select(ex=>ex.TheAnswer).Select(ex=>ex.OtherAnswer));
+            check = all_properties_were_injected;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace System {
     public static class HelpfulExtensions {
@@ -30,17 +31,12 @@ namespace System {
         public static void AddIfNew<VALUE>(this ICollection<VALUE> list, VALUE item) {
             if (!list.Contains(item)) list.Add(item);
         }
-        //public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
-        //    foreach (var obj in enumerable)
-        //        action(obj);
-        //}
+        public static string MemberName<T, R>(this T obj, Expression<Func<T, R>> expresion) {
+            if (expresion.Body is MemberExpression)
+                return (expresion.Body as MemberExpression).Member.Name;
+            if (expresion.Body is MethodCallExpression)
+                return (expresion.Body as MethodCallExpression).Method.Name;
+            throw new InvalidOperationException("Cannot derive member name");
+        }
     }
 }
-//namespace System.Linq {
-//    public static class HelpfulExtensions {
-//        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) {
-//            foreach (var obj in enumerable)
-//                action(obj);
-//        }
-//    }
-//}
