@@ -6,7 +6,6 @@ using Castle.Windsor;
 namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
     public class WhenTestingConfigurationOptions : IDisposable {
         private Type _expectedExceptionDuringReg;
-        private QuestionOfLifeUniverseAndEverything _question;
         protected Func<OptionalPropertyInjectionFacility> create_facility = () => new OptionalPropertyInjectionFacility(false);
         protected Func<ComponentRegistration<QuestionOfLifeUniverseAndEverything>, ComponentRegistration<QuestionOfLifeUniverseAndEverything>>
             additonal_registration = x => x;
@@ -16,8 +15,8 @@ namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
             container.AddFacility("optional-property-injection", create_facility());
             container.Register(Component.For<AnswerToLifeUniverseAndEverything>());
             RegisterComponent(container);
-            Act(container);
-            check();
+            var q = Act(container);
+            check(q);
         }
         private void RegisterComponent(WindsorContainer container) {
             try {
@@ -32,19 +31,19 @@ namespace GIM.CastleContrib.Tests.PropertyInjectionFacility {
                     throw;
             }
         }
-        private void Act(IWindsorContainer container) {
-            if (_expectedExceptionDuringReg.IsNotNull()) return;
-            _question = container.Resolve<QuestionOfLifeUniverseAndEverything>();
+        private QuestionOfLifeUniverseAndEverything Act(IWindsorContainer container) {
+            if (_expectedExceptionDuringReg.IsNotNull()) return null;
+            return container.Resolve<QuestionOfLifeUniverseAndEverything>();
         }
-        protected Action check = delegate { };
+        protected Action<QuestionOfLifeUniverseAndEverything> check = delegate { };
 
-        protected void no_properties_were_injected() {
-            Assert.Null(_question.TheAnswer);
-            Assert.Null(_question.OtherAnswer);
+        protected void no_properties_were_injected(QuestionOfLifeUniverseAndEverything question) {
+            Assert.Null(question.TheAnswer);
+            Assert.Null(question.OtherAnswer);
         }
-        protected void all_properties_were_injected() {
-            Assert.NotNull(_question.TheAnswer);
-            Assert.NotNull(_question.OtherAnswer);
+        protected void all_properties_were_injected(QuestionOfLifeUniverseAndEverything question) {
+            Assert.NotNull(question.TheAnswer);
+            Assert.NotNull(question.OtherAnswer);
         }
         protected void expect_error_while_registering<EXCEPTION_TYPE>() where EXCEPTION_TYPE : Exception {
             _expectedExceptionDuringReg = typeof(EXCEPTION_TYPE);

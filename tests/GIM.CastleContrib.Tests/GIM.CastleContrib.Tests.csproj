@@ -66,14 +66,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PropertyInjectionFacility\PropertyInjectionScenario.cs" />
     <Compile Include="PropertyInjectionFacility\QuestionOfLifeUniverseAndEverything.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyInjectionFacility\WhenTestingConfigurationOptions.cs" />
+    <Compile Include="PropertyInjectionFacility\When_configuring_select_component_properties_with_expression_extension.cs" />
+    <Compile Include="PropertyInjectionFacility\When_configuring_select_component_properties_with_string_extension.cs" />
     <Compile Include="PropertyInjectionFacility\When_configuring_with_in_code_facility_initialization.cs" />
-    <Compile Include="PropertyInjectionFacility\When_configuring_all_component_properties_with_extension_method.cs" />
-    <Compile Include="PropertyInjectionFacility\When_injecting_properties_by_default.cs" />
-    <Compile Include="PropertyInjectionFacility\When_not_injecting_properties_by_default.cs" />
+    <Compile Include="PropertyInjectionFacility\When_configuring_all_component_properties_with_extension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\app\GIM.CastleContrib\GIM.CastleContrib.csproj">

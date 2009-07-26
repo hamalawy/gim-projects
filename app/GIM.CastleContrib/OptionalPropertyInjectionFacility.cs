@@ -35,16 +35,17 @@ namespace GIM.CastleContrib {
         }
 
         private static void CheckErrors(ComponentModel model) {
-            if ((model.GetBoolAttribute("wire-all-properties") ?? false) && (model.GetBoolAttribute("wire-no-properties") ?? false))
-                throw new InvalidOperationException("Found contradicting Wire All and None flags when setting up property registration for component {0}".Use(model.Service.FullName));
+            //if ((model.GetBoolAttribute("wire-all-properties") ?? false) && (model.GetBoolAttribute("wire-no-properties") ?? false))
+            //    throw new InvalidOperationException("Found contradicting Wire All and None flags when setting up property registration for component {0}".Use(model.Service.FullName));
         }
         private bool ShouldRemove(System.Reflection.PropertyInfo pi, ComponentModel model) {
-            bool? wirePropertiesOfComponentByDefault = model.GetBoolAttribute("wire-all-properties")??(model.GetBoolAttribute("wire-no-properties") == true ? false as bool? : null);
-            bool wireThisSpecificProperty = (model.Configuration.Attributes["wire-selected-properties"] ?? "").Split(',')
+            bool wireThisSpecificProperty = _wirePropertiesInContainerByDefault;
+            wireThisSpecificProperty = model.GetBoolAttribute("wire-component-properties")?? wireThisSpecificProperty;
+            bool thisPropertyIsAnException = (model.Configuration.Attributes["excepted-properties"] ?? "").Split(',')
                 .Select(x => x.Trim()).Contains(pi.Name);
-            if (wireThisSpecificProperty)
-                return false;
-            return !(wirePropertiesOfComponentByDefault ?? _wirePropertiesInContainerByDefault);
+            if(thisPropertyIsAnException)
+                wireThisSpecificProperty = !wireThisSpecificProperty;
+            return !wireThisSpecificProperty;
         }
 
         private static bool? ToBool(string stringBool) {

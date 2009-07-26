@@ -4,8 +4,17 @@ using System;
 using System.Linq.Expressions;
 
 namespace Castle.MicroKernel.Registration {
-    public class WirePropertiesOptions<COMPONENT_TYPE> {
-        public WirePropertiesOptions<COMPONENT_TYPE> Select<PROPERTY_TYPE>(
+    public class ExceptionWirePropertiesOptions<COMPONENT_TYPE>  {
+        WirePropertiesOptions<COMPONENT_TYPE> _parentOptions;
+        public ExceptionWirePropertiesOptions(WirePropertiesOptions<COMPONENT_TYPE> parentOptions) {
+            if (parentOptions.IsNull())
+                throw new ArgumentNullException("parentOptions", "parentOptions is null.");
+            _parentOptions = parentOptions;
+        }
+        public ExceptionWirePropertiesOptions<COMPONENT_TYPE> Except(params string[] propertyNames) {
+            _parentOptions.ExceptedPropertyNames.AddRange(propertyNames); return this;
+        }
+        public ExceptionWirePropertiesOptions<COMPONENT_TYPE> Except<PROPERTY_TYPE>(
             Expression<Func<COMPONENT_TYPE, PROPERTY_TYPE>> expresion) {
             string name;
 
@@ -14,33 +23,34 @@ namespace Castle.MicroKernel.Registration {
             else if (expresion.Body is MethodCallExpression)
                 name = (expresion.Body as MethodCallExpression).Method.Name;
             else
-                throw new InvalidOperationException("Cannot derive member name");
+                throw new InvalidOperationException("Cannot derive member name. Proper use: .WireProperties(o=>o.None().Except(x=>x.SomeProperty)");
 
-            return Select(name);
+            return Except(name);
         }
-        private List<string> _propertyNames = new List<string>();
-        public IEnumerable<string> PropertyNames { get { return _propertyNames; } }
-        private bool _shouldWireNone = false;
-        public bool ShouldWireNone { get { return _shouldWireNone; } }
-        private bool _shouldWireAll = false;
-        public bool ShouldWireAll { get { return _shouldWireAll; } }
-        public WirePropertiesOptions<COMPONENT_TYPE> All() { _shouldWireAll = true; return this; }
-        public WirePropertiesOptions<COMPONENT_TYPE> None() { _shouldWireNone = true; return this;
-        }
-        public WirePropertiesOptions<COMPONENT_TYPE> Select(string propertyName) {
-            _propertyNames.Add(propertyName);
-            return this;
-        }
+        
     }
+    public class WirePropertiesOptions<COMPONENT_TYPE> {
+        private List<string> _exceptedPropertyNames = new List<string>();
+        public List<string> ExceptedPropertyNames { get { return _exceptedPropertyNames; } }
+        public bool? WireComponentProperties { get; private set; }
+        public ExceptionWirePropertiesOptions<COMPONENT_TYPE> All() { 
+            WireComponentProperties = true; 
+            return new ExceptionWirePropertiesOptions<COMPONENT_TYPE>(this); }
+        public ExceptionWirePropertiesOptions<COMPONENT_TYPE> None() { 
+            WireComponentProperties = false; 
+            return new ExceptionWirePropertiesOptions<COMPONENT_TYPE>(this); }
+    }
+
     public static partial class OptionalPropertyInjectionFacility_ComponentRegistrationExtensions {
-        public static ComponentRegistration<S> WireProperties<S>(this ComponentRegistration<S> reg, Func<WirePropertiesOptions<S>, WirePropertiesOptions<S>> optionCreation) {
-            var opt = optionCreation(new WirePropertiesOptions<S>());
-            if (opt.PropertyNames.FirstOrDefault().IsNotNull())
-                reg.AddAttributeDescriptor("wire-selected-properties", String.Join(", ", opt.PropertyNames.ToArray()));
-            if (opt.ShouldWireAll)
-                reg.AddAttributeDescriptor("wire-all-properties", "true");
-            if (opt.ShouldWireNone)
-                reg.AddAttributeDescriptor("wire-no-properties", "true");
+        public static ComponentRegistration<S> WireProperties<S>(this ComponentRegistration<S> reg, Action<WirePropertiesOptions<S>> optionCreation) {
+            var opt = new WirePropertiesOptions<S>();
+            optionCreation(opt);
+            if (opt.WireComponentProperties.IsNull())
+                return reg;
+            reg.AddAttributeDescriptor("wire-component-properties", opt.WireComponentProperties.Value.ToString());
+
+            if (opt.ExceptedPropertyNames.FirstOrDefault().IsNotNull())
+                reg.AddAttributeDescriptor("excepted-properties", opt.ExceptedPropertyNames.Join(", "));
             return reg;
         }
     }
