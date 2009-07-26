@@ -4,6 +4,19 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace System {
+    public static class StringExtensions {
+        private static Action<string> WriteAction = s => System.Diagnostics.Debug.WriteLine(s);
+        public static string Use(this string unformatted, params object[] args) {
+            return String.Format(unformatted, args);
+        }
+        public static string Join(this IEnumerable<string> strings, string separator) {
+            return String.Join(separator, strings.ToArray());
+        }
+        public static bool IsEmpty(this string str) {
+            return String.IsNullOrEmpty(str);
+        }
+    }
+
     public static class HelpfulExtensions {
         public static List<T> AsList<T>(this T obj) {
             if (typeof(IEnumerable<T>).IsAssignableFrom(obj.GetType())) return (obj as IEnumerable<T>).ToList();
