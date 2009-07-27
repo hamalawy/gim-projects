@@ -5,11 +5,12 @@ using System.Linq;
 using Castle.Core;
 
 namespace GIM.CastleContrib {
-    public static partial class ComponentModelExtensions {
+    internal static partial class ComponentModelExtensions {
         public static bool? GetBoolAttribute(this ComponentModel model, string attributeName) {
-            return ToBool(model.Configuration.Attributes[attributeName]);
+            return model.Configuration.IfNotNull(x=>
+                x.Attributes[attributeName].ToBool());
         }
-        private static bool? ToBool(string stringBool) {
+        public static bool? ToBool(this string stringBool) {
             bool res;
             bool success = Boolean.TryParse(stringBool, out res);
             return success == false ? null : res as bool?;
@@ -17,13 +18,21 @@ namespace GIM.CastleContrib {
     }
     public class OptionalPropertyInjectionFacility : AbstractFacility, IFacility {
         private bool _wirePropertiesInContainerByDefault;
-
+        public OptionalPropertyInjectionFacility() : this(true) { }
         public OptionalPropertyInjectionFacility(bool provideByDefault) {
             _wirePropertiesInContainerByDefault = provideByDefault;
         }
-
+        public OptionalPropertyInjectionFacility(string provideByDefault) {
+            _wirePropertiesInContainerByDefault = true;
+        }
+        
         protected override void Init() {
             Kernel.ComponentRegistered += new ComponentDataDelegate(OnComponentRegistered);
+
+            if (FacilityConfig.IsNotNull()) {
+                if (FacilityConfig.Attributes["provideByDefault"].ToBool().IsNotNull())
+                    _wirePropertiesInContainerByDefault = (bool)FacilityConfig.Attributes["provideByDefault"].ToBool();
+            }
         }
 
         void OnComponentRegistered(string key, IHandler handler) {
@@ -41,7 +50,7 @@ namespace GIM.CastleContrib {
         private bool ShouldRemove(System.Reflection.PropertyInfo pi, ComponentModel model) {
             bool wireThisSpecificProperty = _wirePropertiesInContainerByDefault;
             wireThisSpecificProperty = model.GetBoolAttribute("wire-component-properties")?? wireThisSpecificProperty;
-            bool thisPropertyIsAnException = (model.Configuration.Attributes["excepted-properties"] ?? "").Split(',')
+            bool thisPropertyIsAnException = (model.Configuration.IfNotNull(x=>x.Attributes["excepted-properties"]) ?? "").Split(',')
                 .Select(x => x.Trim()).Contains(pi.Name);
             if(thisPropertyIsAnException)
                 wireThisSpecificProperty = !wireThisSpecificProperty;
