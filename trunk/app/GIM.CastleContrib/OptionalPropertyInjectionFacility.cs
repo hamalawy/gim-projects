@@ -3,6 +3,7 @@ using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel;
 using System.Linq;
 using Castle.Core;
+using Castle.Core.Configuration;
 
 namespace GIM.CastleContrib {
     internal static partial class ComponentModelExtensions {
@@ -37,31 +38,27 @@ namespace GIM.CastleContrib {
 
         void OnComponentRegistered(string key, IHandler handler) {
             var model = handler.ComponentModel;
-            CheckErrors(model);
             var propertiesToRemove = model.Properties.Where(p => ShouldRemove(p.Property, model)).ToArray();
             propertiesToRemove.ForEach(ps =>
                 model.Properties.Remove(ps));
         }
 
-        private static void CheckErrors(ComponentModel model) {
-            //if ((model.GetBoolAttribute("wire-all-properties") ?? false) && (model.GetBoolAttribute("wire-no-properties") ?? false))
-            //    throw new InvalidOperationException("Found contradicting Wire All and None flags when setting up property registration for component {0}".Use(model.Service.FullName));
+        static bool Eq(string s1, string s2) {
+            return string.Equals(s1, s2, StringComparison.InvariantCultureIgnoreCase);
+        }
+        private IConfiguration GetChildNode(string nodeName, ConfigurationCollection configCollection) {
+            return configCollection.FirstOrDefault(c => Eq(c.Name, nodeName));
         }
         private bool ShouldRemove(System.Reflection.PropertyInfo pi, ComponentModel model) {
-            bool wireThisSpecificProperty = _wirePropertiesInContainerByDefault;
-            wireThisSpecificProperty = model.GetBoolAttribute("wire-component-properties")?? wireThisSpecificProperty;
-            bool thisPropertyIsAnException = (model.Configuration.IfNotNull(x=>x.Attributes["excepted-properties"]) ?? "").Split(',')
-                .Select(x => x.Trim()).Contains(pi.Name);
-            if(thisPropertyIsAnException)
-                wireThisSpecificProperty = !wireThisSpecificProperty;
-            return !wireThisSpecificProperty;
+            if (model.Configuration.IsNull())
+                return !_wirePropertiesInContainerByDefault;
+            return ! (GetChildNode("wire-properties", model.Configuration.Children)
+                .IfNotNull(n => {
+                    var wireAllOnComponent = n.Attributes["value"].ToBool() ?? true;
+                    if (n.Children.Any(c => Eq("except", c.Name) && Eq(pi.Name, c.Attributes["propertyName"])))
+                        return (!wireAllOnComponent) as bool?;
+                    return wireAllOnComponent as bool?;
+                }) ?? _wirePropertiesInContainerByDefault);
         }
-
-        private static bool? ToBool(string stringBool) {
-            bool res;
-            bool success = Boolean.TryParse(stringBool, out res);
-            return success == false ? null : res as bool?;
-        }
-
     }
 }

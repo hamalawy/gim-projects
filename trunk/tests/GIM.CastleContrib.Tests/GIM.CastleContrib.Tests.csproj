@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="PropertyInjectionFacility\QuestionOfLifeUniverseAndEverything.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyInjectionFacility\WhenConfiguringWithDSL.cs" />
     <Compile Include="PropertyInjectionFacility\WhenTestingConfigurationOptions.cs" />
     <Compile Include="PropertyInjectionFacility\When_configuring_select_component_properties_with_expression_extension.cs" />
     <Compile Include="PropertyInjectionFacility\When_configuring_select_component_properties_with_string_extension.cs" />
