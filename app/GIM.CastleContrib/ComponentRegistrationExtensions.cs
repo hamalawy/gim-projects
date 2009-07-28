@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Linq.Expressions;
+using Castle.Core.Configuration;
 
 namespace Castle.MicroKernel.Registration {
     public class ExceptionWirePropertiesOptions<COMPONENT_TYPE>  {
@@ -47,11 +48,11 @@ namespace Castle.MicroKernel.Registration {
             optionCreation(opt);
             if (opt.WireComponentProperties.IsNull())
                 return reg;
-            reg.AddAttributeDescriptor("wire-component-properties", opt.WireComponentProperties.Value.ToString());
-
-            if (opt.ExceptedPropertyNames.FirstOrDefault().IsNotNull())
-                reg.AddAttributeDescriptor("excepted-properties", opt.ExceptedPropertyNames.Join(", "));
-            return reg;
+            var c = new MutableConfiguration("wire-properties")
+                .Attribute("value", opt.WireComponentProperties.Value.ToString());
+            opt.ExceptedPropertyNames.ForEach(p=>
+                c.CreateChild("except").Attribute("propertyName", p));
+            return reg.Configuration(c);
         }
     }
 }

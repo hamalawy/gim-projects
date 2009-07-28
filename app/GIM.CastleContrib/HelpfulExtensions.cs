@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace System {
-    public static class StringExtensions {
+    internal static class StringExtensions {
         private static Action<string> WriteAction = s => System.Diagnostics.Debug.WriteLine(s);
         public static string Use(this string unformatted, params object[] args) {
             return String.Format(unformatted, args);
@@ -17,7 +17,7 @@ namespace System {
         }
     }
 
-    public static class HelpfulExtensions {
+    internal static class HelpfulExtensions {
         public static List<T> AsList<T>(this T obj) {
             if (typeof(IEnumerable<T>).IsAssignableFrom(obj.GetType())) return (obj as IEnumerable<T>).ToList();
             return new List<T> { obj };
