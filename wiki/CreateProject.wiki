@@ -12,6 +12,10 @@ Simply type
 PS c:\code>C:\path-to-script\Create-Project.ps1 NameOfProject
 }}}
 
+= Get It =
+
+Get the script and .NET template at https://gim-projects.googlecode.com/svn/Create-Project/trunk
+
 = Details =
 
 The script works by copying all files from a "template" directory while replacing tokens in file names and file contents.  It should therefore be very easy to simply to make your own modifications to it.  Tokens that it is currently set up to resolve (see the $tokens hash setup in create-project.ps1) are:
