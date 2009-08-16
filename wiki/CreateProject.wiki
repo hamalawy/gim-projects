@@ -15,6 +15,6 @@ PS c:\code>C:\path-to-script\Create-Project.ps1 NameOfProject
 = Details =
 
 The script works by copying all files from a "template" directory while replacing tokens in file names and file contents.  It should therefore be very easy to simply to make your own modifications to it.  Tokens that it is currently set up to resolve (see the $tokens hash setup in create-project.ps1) are:
- * #{ProjectName} - Replaced with NameOfProject
- * #{GUID} - Replaced by a GUID (different each time the token is called)
- * #{GUID[0]} - Replaced by a specific GUID (up to GUID[9]). #{GUID[0]} will always be the same GUID over the course of the script run.  Next time the script is run it will be different. 
+ * `#{ProjectName}` - Replaced with NameOfProject
+ * `#{GUID}` - Replaced by a GUID (different each time the token is called)
+ * `#{GUID[0]}` - Replaced by a specific GUID (up to `#{GUID[9]}`). `#{GUID[0]}` will always be the same GUID over the course of the script run.  Next time the script is run it will be different. 
