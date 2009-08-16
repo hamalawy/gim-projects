@@ -1,5 +1,9 @@
 ## create-project v1.0
 ####################################################################################################
+## Author: George Mauer (gmauer@gmail.com)
+## Licence: GNU General Public License v3
+## Copyright 2009
+####################################################################################################
 ## Used to create all the basic files necessary for starting a new project.  By running this script
 ## you will create a directory with all the files necessary to get going.
 ## 
