@@ -13,8 +13,9 @@
 ####################################################################################################
 ## Usage:
 ##   Create-Project ProjectName
-##
 ####################################################################################################
+
+# Tokens that will be replaced in file names and contents
 $tokens = @{
   '#{ProjectName}'={$name};
   '#{GUID}'={ [Guid]::NewGuid().ToString().ToUpperInvariant() };
@@ -22,13 +23,13 @@ $tokens = @{
 for ($i=0; $i -lt 10; $i++) {
   $tokens.Add("#{GUID[$i]}", {[Guid]::NewGuid().ToString().ToUpperInvariant()})
 }
+####################################################################################################
 
 $name = $args[0]
 if(!$name) {
 	echo "Please provide a valid project name as the first argument"
 	exit
 }
-del $name -recurse -ErrorAction SilentlyContinue
 
 function Replace-Tokens { param($str, $token_dictionary)
 	foreach($tkn in $token_dictionary.Keys) {
@@ -55,8 +56,18 @@ foreach($dirpath in $directories) {
 	iex $exec
 }
 
-# Copy, rename, and replace tokens in files
-$files =  dir $templatespath -recurse | where {!$_.PsIsContainer} | %{$_.FullName} | sort
+# Copy and rename, and replace tokens in binary files
+$files =  dir $templatespath -recurse -include *.dll,*.exe | where {!$_.PsIsContainer} | %{$_.FullName} | sort
+foreach($filepath in $files) { 
+	$newfilepath = Replace-Tokens $filepath @{$templatespath={$name}}
+	$newfilepath = Replace-Tokens $newfilepath $tokens
+	$exec = "cp '$filepath' '$newfilepath'"
+	echo $exec
+	iex $exec
+}
+
+# Copy, rename, and replace tokens in text files
+$files =  dir $templatespath -recurse -exclude *.dll,*.exe | where {!$_.PsIsContainer} | %{$_.FullName} | sort
 foreach($filepath in $files) { 
   $contents = [String]::join([Environment]::Newline, (Get-Content $filepath))
 	$contents = Replace-Tokens $contents $tokens
@@ -65,3 +76,4 @@ foreach($filepath in $files) {
 	echo "Creating $newfilepath from $filepath"
 	Set-Content $newfilepath $contents -Encoding UTF8
 }
+
