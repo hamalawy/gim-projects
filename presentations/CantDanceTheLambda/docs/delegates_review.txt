@@ -1,0 +1,3 @@
+Pre-lambda Delegates - A Review
+
+Even if you have never given much thought to delegate types, if you have ever raised or handled an event you have used them.  However, despite working in an event-driven paradigm some win and webforms developers don't actually have a full understanding of what exactly events are.
