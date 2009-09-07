@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using System.IO;
 using Castle.Windsor;
 using Castle.MicroKernel.Registration;
-using Castle.Core;
 using System.Reflection;
+using Castle.Core;
 
 namespace CantDanceTheLambda {
     public class ComponentInstance {

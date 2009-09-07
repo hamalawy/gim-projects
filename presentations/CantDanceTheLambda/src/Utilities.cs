@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using Rhino.Mocks;
 using System.IO;
@@ -50,8 +47,10 @@ namespace CantDanceTheLambda {
         public void Will_return_null_from_nonexistant_object() {
             StreamFactory factory = null;
             Assert.IsNull(
-                factory.IfNotNull(f => f.Stream));
+                factory.IfNotNull(f => f.Stream);
         }
-
+        public void GetLengthOfStream() {
+            // TODO
+        }
     }
 }
