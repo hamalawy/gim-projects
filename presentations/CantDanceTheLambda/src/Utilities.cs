@@ -1,3 +1,7 @@
+// Author: George Mauer
+// Code samples for presentation You Can't Dance the Lambda
+// Slide: So...Why Do I Care?
+// Demonstrates how to use lambdas to abstract away the usage pattern testing for null before using an object
 using System;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -15,17 +19,21 @@ namespace CantDanceTheLambda {
             return getValue(obj);
         }
     }
+
+
     [TestFixture]
     public class UtilityTests {
         public interface IThing {
             void DoSomething();
         }
-        public class StreamFactory {
-            public StreamFactory() {
+        public class StreamContainer {
+            public StreamContainer() {
                 Stream = new MemoryStream();
             }
             public Stream Stream { get; set; }
         }
+
+        #region DoIfNotNull
         [Test]
         public void Will_act_on_not_null_object() {
             var thing = MockRepository.GenerateMock<IThing>();
@@ -37,20 +45,25 @@ namespace CantDanceTheLambda {
             IThing thing = null;
             Utilities.DoIfNotNull(thing, x => x.DoSomething());
         }
+        #endregion
+
+        #region IfNotNull
         [Test]
         public void Will_return_from_not_null_object() {
-            StreamFactory factory = new StreamFactory();
+            StreamContainer factory = new StreamContainer();
             Assert.IsNotNull(
                 factory.IfNotNull(f => f.Stream));
         }
         [Test]
         public void Will_return_null_from_nonexistant_object() {
-            StreamFactory factory = null;
+            StreamContainer factory = null;
             Assert.IsNull(
-                factory.IfNotNull(f => f.Stream);
+                factory.IfNotNull(f => f.Stream));
         }
         public void GetLengthOfStream() {
-            // TODO
+            StreamContainer factory;
+            //factory.IfNotNull(f => f.Stream).IfNotNull(s => s.Length);
         }
+        #endregion
     }
 }

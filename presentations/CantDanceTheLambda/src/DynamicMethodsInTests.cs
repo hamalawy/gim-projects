@@ -1,10 +1,10 @@
+// Author: George Mauer
+// Code samples for presentation You Can't Dance the Lambda
+// Slide: Dynamic Methods
+// How to change the implementation of methods during runtime
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using Rhino.Mocks;
-using System.IO;
 
 namespace CantDanceTheLambda {
     public class PredatorEncounterStrategy : IEncounterStrategy {
@@ -16,8 +16,11 @@ namespace CantDanceTheLambda {
     public interface IEncounterStrategy {
         string EncounterResponse { get; }
     }
-    public class Animal {
 
+    /// <summary>
+    /// An Animal encounters other animals and uses the appropriate strategy to decide what to do
+    /// </summary>
+    public class Animal {
         private string _currently;
         private IEncounterStrategy _preyStrategy;
         private IEncounterStrategy _predatorStrategy;
@@ -35,12 +38,20 @@ namespace CantDanceTheLambda {
                 _currently = _preyStrategy.EncounterResponse;
         }
     }
+    
+    /// <summary>
+    /// When run the methods execute in the following order
+    /// arrange_scenario -> test 1 -> execute_scenario()
+    /// arrange_scenario -> test 2 -> execute_scenario()
+    /// All the actual execution and assertions happen inside of execute_scenario()
+    /// </summary>
     [TestFixture]
     public class DynamicMethosInTests {
         Action<Animal> when = _ => { };
         Action<Animal> then = _ => { };
         [SetUp] public void arrange_scenario() {
             when = _ => { }; then = _ => { }; }
+
         [TearDown] public void execute_scenario() {
             //given
             var animal = new Animal(new PredatorEncounterStrategy(), new PreyEncounterStrategy());

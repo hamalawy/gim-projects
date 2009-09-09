@@ -1,3 +1,8 @@
+// Author: George Mauer
+// Code samples for presentation You Can't Dance the Lambda
+// Slide: So...Why do I care?
+// An Example of using lambdas to re-implement the C# using keyword
+
 using System;
 using NUnit.Framework;
 
@@ -16,6 +21,7 @@ namespace CantDanceTheLambda {
             }
         }
     }
+
     public class TestDisposable : IDisposable {
         public TestDisposable() {
             DisposeCalled = false;
@@ -25,8 +31,10 @@ namespace CantDanceTheLambda {
             DisposeCalled = true;
         }
     }
+
+    
     [TestFixture]
-    public class UsingTests
+    public class UsingKeywordTests
     {
         [Test] public void Call_dispose_if_action_succeeds() {
             var disposableObject = new TestDisposable();
@@ -47,6 +55,8 @@ namespace CantDanceTheLambda {
             Assert.IsTrue(disposableObject.DisposeCalled);
         }
     }
+    
+    
     [TestFixture]
     public class CustomUsingTests {
        

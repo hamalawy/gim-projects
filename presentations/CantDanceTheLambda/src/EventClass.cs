@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// Author: George Mauer
+// Code samples for presentation You Can't Dance the Lambda
+// Slide: Time For Review
+// Demonstrates how to declare, subscribe to and invoke events.  Demonstrates there is no difference between () and .Invoke()
+
+using System;
 using NUnit.Framework;
 
 namespace CantDanceTheLambda {
@@ -17,12 +19,12 @@ namespace CantDanceTheLambda {
     public class EventUser {
         [Test]
         public void Can_subscribe_to_event(){
+            int eventRaisedCount = 0;
             var ec = new EventClass();
-            ec.OnSomeEvent += new EventHandler(HandlerMethod);
+            ec.OnSomeEvent += (o, e) => eventRaisedCount++;
             ec.RaiseEventTwice();
+            Assert.AreEqual(2, eventRaisedCount);
         }
 
-        void HandlerMethod(object sender, EventArgs e)
-        { }
     }
 }
