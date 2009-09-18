@@ -37,7 +37,11 @@
     </Reference>
     <Reference Include="xunit, Version=1.4.9.1446, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\xunit.dll</HintPath>
+      <HintPath>..\..\tools\lib\xunit.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.5.0.1337, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\tools\lib\Rhino.Mocks.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\#{ProjectName}\#{ProjectName}.csproj">
-      <Project>#{GUID[0]}</Project>
+      <Project>{#{GUID[0]}}</Project>
       <Name>#{ProjectName}</Name>
     </ProjectReference>
   </ItemGroup>
