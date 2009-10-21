@@ -1,0 +1,1 @@
+Article here: http://georgemauer.net/blog/rhino-mocks-intro/
